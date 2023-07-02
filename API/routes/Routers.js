@@ -1,5 +1,5 @@
 import express from 'express';
-import { createTask, deleteTask, getTask, getallTasks, updateTask } from '../controllers/Tareacontrollers.js';
+import { createTask, deleteTask,getTask, getallTasks, updateTask } from '../controllers/Tareacontrollers.js';
 
 const router = express.Router()
 

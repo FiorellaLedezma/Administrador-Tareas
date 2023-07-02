@@ -8,28 +8,36 @@ import db from "../database/db.js";
 export const getallTasks = async (req, res) => {
   try {
     const query = `
-    SELECT tareas.id,tareas.descripcion, colaboradores.nombre AS nombre_Colaborador, estados.estado AS Estado, prioridades.prioridad AS Prioridad, tareas.fecha_inicio, tareas.fecha_fin, tareas.nota
-    FROM tareas
-    JOIN colaboradores ON tareas.id_colaborador = colaboradores.id
-    JOIN estados ON tareas.id_estado = estados.id
-    JOIN prioridades ON tareas.id_prioridad = prioridades.id
+    SELECT tareas.*, colaboradores.nombre AS nombre_Colaborador, 
+    estados.estado AS Estado, prioridades.prioridad AS Prioridad, 
+    tareas.fecha_inicio, tareas.fecha_fin, tareas.nota FROM tareas 
+    JOIN colaboradores ON tareas.id_colaborador = colaboradores.id 
+    JOIN estados ON tareas.id_estado = estados.id 
+    JOIN prioridades ON tareas.id_prioridad = prioridades.id 
     ORDER BY fecha_inicio ASC
     `;
 
-    const [results, metadata] = await db.query(query);
-    res.json(results)
+    const [tareas, settareas] = await db.query(query);
+    res.json(tareas)
   } catch (error) {
-    res.json({ message: error.message })
+    res.status(500).json({
+      "success": false,
+      "error": {
+        "code": "INTERNAL_ERROR",
+        "message": "Error en la accion"
+      }
+    });
   }
 }
 
 //Mostrar un registro
- export const getTask = async (req, res) => {
-  try {
+export const getTask = async (req, res) => {
+  try{
     const tarea = await tareamodel.findAll({
       where: { id: req.params.id }
     })
     res.json(tarea[0])
+  
   } catch (error) {
     res.json({ message: error.message })
   }
@@ -39,31 +47,43 @@ export const getallTasks = async (req, res) => {
 //Crear un registro 
 export const createTask = async (req, res) => {
   try {
-    const{descripcion,id_colaborador,id_estado,id_prioridad,fecha_inicio,fecha_fin,nota}= req.body
 
-    await tareamodel.create(descripcion,id_colaborador,id_estado,id_prioridad,fecha_inicio,fecha_fin,nota);
-    
+    await tareamodel.create(req.body);
+
     res.json({
+      "success": true,
       "message": "¡Tarea guardada!"
     })
   } catch (error) {
-    res.json({ message: error.message })
-    console.log(req.body)
+    res.status(500).json({
+      "success": false,
+      "error": {
+        "code": "INTERNAL_ERROR",
+        "message": "Error en la accion"
+      }
+    });
   }
 }
 
 //Actualizar un registro 
 export const updateTask = async (req, res) => {
-  const{descripcion,id_colaborador,id_estado,id_prioridad,fecha_inicio,fecha_fin,nota}= req.body
+  //const{descripcion,id_colaborador,id_estado,id_prioridad,fecha_inicio,fecha_fin,nota}= req.body
   try {
-    await tareamodel.update(descripcion,id_colaborador,id_estado,id_prioridad,fecha_inicio,fecha_fin,nota, {
+    await tareamodel.update(req.body, {
       where: { id: req.params.id }
     })
     res.json({
+      "success": true,
       "message": "¡Tarea actualizada!"
     })
   } catch (error) {
-    res.json({ message: error.message })
+    res.status(500).json({
+      "success": false,
+      "error": {
+        "code": "INTERNAL_ERROR",
+        "message": "Error en la accion"
+      }
+    });
   }
 }
 
@@ -74,9 +94,16 @@ export const deleteTask = async (req, res) => {
       where: { id: req.params.id }
     })
     res.json({
+      "success": true,
       "message": "¡Tarea eliminada!"
     })
   } catch (error) {
-    res.json({ message: error.message })
+    res.status(500).json({
+      "success": false,
+      "error": {
+        "code": "INTERNAL_ERROR",
+        "message": "Error en la accion"
+      }
+    });
   }
 }

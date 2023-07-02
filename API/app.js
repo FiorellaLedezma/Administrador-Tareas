@@ -23,6 +23,7 @@ app.use('/prioridad', routerp)
 //Verificar que se conecte a la bd
 try {
   await db.authenticate()
+  db.sync();
   console.log('conexion exitosa')
 } catch (error) {
   console.log('error de conexion:${error}')
