@@ -67,7 +67,7 @@ export const createTask = async (req, res) => {
 
 //Actualizar un registro 
 export const updateTask = async (req, res) => {
-  //const{descripcion,id_colaborador,id_estado,id_prioridad,fecha_inicio,fecha_fin,nota}= req.body
+  
   try {
     await tareamodel.update(req.body, {
       where: { id: req.params.id }
